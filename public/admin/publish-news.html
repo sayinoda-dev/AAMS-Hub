@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Publish news — Admin</title>
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <nav class="side-nav" data-compact-nav aria-label="Admin">
+        <div class="side-nav__inner">
+          <div class="side-nav__user">
+            <p class="name" data-user-name>…</p>
+            <p class="role">Admin</p>
+          </div>
+          <ul class="nav-tabs">
+            <li><a href="/admin/dashboard.html" data-nav-link>Dashboard</a></li>
+            <li>
+              <a href="/admin/publish-news.html" class="is-active" data-nav-link>Publish news</a>
+            </li>
+            <li><a href="/admin/review-queue.html" data-nav-link>Review queue</a></li>
+            <li><a href="#" data-logout>Sign out</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <div style="flex: 1; min-width: 0">
+        <main class="main-content">
+          <header class="page-head">
+            <p class="meta-label">News desk</p>
+            <h1>Publish news</h1>
+            <p class="lede">Students see this on their news dashboard immediately.</p>
+          </header>
+
+          <form id="news-form" class="card" style="max-width: 40rem" data-reveal novalidate>
+            <div class="form-field">
+              <label for="title">Headline</label>
+              <input id="title" name="title" maxlength="200" required />
+            </div>
+            <div class="form-field">
+              <label for="body">Body</label>
+              <textarea id="body" name="body" maxlength="10000" required></textarea>
+            </div>
+            <p id="news-error" class="form-error" hidden role="alert"></p>
+            <p id="news-success" class="garamond" hidden role="status"></p>
+            <button type="submit" class="btn btn--copper">Publish</button>
+          </form>
+        </main>
+      </div>
+    </div>
+
+    <script src="/js/config.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/animations.js"></script>
+    <script src="/js/admin-publish.js"></script>
+  </body>
+</html>

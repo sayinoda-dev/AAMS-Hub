@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Projects — Science Club</title>
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <nav class="side-nav" data-compact-nav aria-label="Main">
+        <div class="side-nav__inner">
+          <div class="side-nav__user">
+            <p class="name" data-user-name>…</p>
+            <p class="role">Student</p>
+          </div>
+          <ul class="nav-tabs">
+            <li>
+              <a href="/student/news.html" data-nav-link>
+                <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+                News
+              </a>
+            </li>
+            <li>
+              <a href="/student/submit-idea.html" data-nav-link>
+                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                Submit idea
+              </a>
+            </li>
+            <li>
+              <a href="/student/projects.html" class="is-active" data-nav-link>
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                Projects
+              </a>
+            </li>
+            <li><a href="#" data-logout>Sign out</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <div style="flex: 1; min-width: 0">
+        <main class="main-content">
+          <header class="page-head">
+            <p class="meta-label"><span class="section-num">02</span> — Groups</p>
+            <h1>Projects</h1>
+            <p class="lede">Approved work you can join with a group code from your lead or admin.</p>
+          </header>
+
+          <section class="card" data-reveal style="max-width: 28rem; margin-bottom: var(--space-xl)">
+            <h2 class="display" style="font-size: 1rem">Join with code</h2>
+            <form id="join-form">
+              <div class="form-field">
+                <label for="group_code">Group code</label>
+                <input id="group_code" name="group_code" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+              </div>
+              <p id="join-error" class="form-error" hidden role="alert"></p>
+              <p id="join-success" class="garamond" hidden role="status"></p>
+              <button type="submit" class="btn">Join project</button>
+            </form>
+          </section>
+
+          <section aria-labelledby="projects-list-heading">
+            <h2 id="projects-list-heading" class="display" style="font-size: 1.25rem">Approved projects</h2>
+            <div id="projects-root"><p class="loading garamond">Loading…</p></div>
+          </section>
+
+          <section style="margin-top: var(--space-xl)" aria-labelledby="memberships-heading">
+            <h2 id="memberships-heading" class="display" style="font-size: 1rem">Your groups</h2>
+            <div id="memberships-root"><p class="loading garamond">Loading…</p></div>
+          </section>
+        </main>
+      </div>
+
+      <nav class="tab-bar" aria-label="Mobile">
+        <a href="/student/news.html" data-nav-link>
+          <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+          News
+        </a>
+        <a href="/student/submit-idea.html" data-nav-link>
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Submit
+        </a>
+        <a href="/student/projects.html" class="is-active" data-nav-link aria-current="page">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/></svg>
+          Projects
+        </a>
+      </nav>
+    </div>
+
+    <script src="/js/config.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/animations.js"></script>
+    <script src="/js/student-projects.js"></script>
+  </body>
+</html>

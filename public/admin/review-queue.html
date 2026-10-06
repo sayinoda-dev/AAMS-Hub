@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Review queue — Admin</title>
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <nav class="side-nav" data-compact-nav aria-label="Admin">
+        <div class="side-nav__inner">
+          <div class="side-nav__user">
+            <p class="name" data-user-name>…</p>
+            <p class="role">Admin</p>
+          </div>
+          <ul class="nav-tabs">
+            <li><a href="/admin/dashboard.html" data-nav-link>Dashboard</a></li>
+            <li><a href="/admin/publish-news.html" data-nav-link>Publish news</a></li>
+            <li>
+              <a href="/admin/review-queue.html" class="is-active" data-nav-link>Review queue</a>
+            </li>
+            <li><a href="#" data-logout>Sign out</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <div style="flex: 1; min-width: 0">
+        <main class="main-content">
+          <header class="page-head">
+            <p class="meta-label">Ideas queue</p>
+            <h1>Pending ideas</h1>
+            <p class="lede">Accept to create a project and group code. Reject to close the proposal.</p>
+          </header>
+
+          <div id="queue-root"><p class="loading garamond">Loading queue…</p></div>
+
+          <section style="margin-top: var(--space-2xl)" aria-labelledby="admin-projects-heading">
+            <h2 id="admin-projects-heading" class="display" style="font-size: 1.25rem">Projects &amp; codes</h2>
+            <p class="form-hint">Regenerate a code if the previous one expired.</p>
+            <div id="admin-projects-root"><p class="loading garamond">Loading…</p></div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="/js/config.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/animations.js"></script>
+    <script src="/js/admin-review.js"></script>
+  </body>
+</html>

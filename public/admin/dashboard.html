@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin — Science Club</title>
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <nav class="side-nav" data-compact-nav aria-label="Admin">
+        <div class="side-nav__inner">
+          <div class="side-nav__user">
+            <p class="name" data-user-name>…</p>
+            <p class="role">Admin</p>
+          </div>
+          <ul class="nav-tabs">
+            <li>
+              <a href="/admin/dashboard.html" class="is-active" data-nav-link>
+                <svg viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>
+                Dashboard
+              </a>
+            </li>
+            <li>
+              <a href="/admin/publish-news.html" data-nav-link>
+                <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+                Publish news
+              </a>
+            </li>
+            <li>
+              <a href="/admin/review-queue.html" data-nav-link>
+                <svg viewBox="0 0 24 24"><path d="M9 5H5v16h14V5h-4M9 5a2 2 0 014 0"/></svg>
+                Review queue
+              </a>
+            </li>
+            <li><a href="#" data-logout>Sign out</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <div style="flex: 1; min-width: 0">
+        <main class="main-content">
+          <header class="page-head">
+            <p class="meta-label">Admin</p>
+            <h1>Dashboard</h1>
+            <p class="lede">Publish news or work through pending ideas.</p>
+          </header>
+
+          <div class="stats-row">
+            <div class="stat-card" data-reveal>
+              <span class="meta-label">Pending ideas</span>
+              <p class="num" data-count-up="0">0</p>
+            </div>
+            <div class="stat-card" data-reveal>
+              <span class="meta-label">News posts</span>
+              <p class="num" data-count-up="0">0</p>
+            </div>
+            <div class="stat-card" data-reveal>
+              <span class="meta-label">Projects</span>
+              <p class="num" data-count-up="0">0</p>
+            </div>
+          </div>
+
+          <div class="card-grid" style="grid-template-columns: 1fr; max-width: 28rem">
+            <a class="card" href="/admin/publish-news.html" data-nav-link data-reveal>
+              <span class="meta-label"><span class="section-num">01</span></span>
+              <h2 class="display" style="font-size: 1.125rem">Publish news</h2>
+              <p class="garamond">Post an update to the student news board.</p>
+            </a>
+            <a class="card" href="/admin/review-queue.html" data-nav-link data-reveal>
+              <span class="meta-label"><span class="section-num">02</span></span>
+              <h2 class="display" style="font-size: 1.125rem">Review ideas</h2>
+              <p class="garamond">Accept ideas to create projects and group codes.</p>
+            </a>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="/js/config.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/animations.js"></script>
+    <script src="/js/admin-dashboard.js"></script>
+  </body>
+</html>

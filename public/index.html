@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AAMS Science Club</title>
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body class="landing">
+    <div class="scroll-progress" aria-hidden="true">
+      <div class="scroll-progress__bar" data-scroll-progress></div>
+    </div>
+    <header class="site-header">
+      <a class="site-header__brand" href="/">
+        <span data-club-logo aria-hidden="true"></span>
+        <span class="site-header__title" data-club-name>AAMS Science Club</span>
+      </a>
+      <a class="btn btn--ghost" href="/login.html">Sign in</a>
+    </header>
+
+    <main>
+      <section class="landing-hero">
+        <div>
+          <p class="meta-label"><span class="section-num">01</span> — Field notes</p>
+          <h1 class="display" data-line-reveal>
+            <span class="line"><span class="line-inner">School science,</span></span>
+            <span class="line"><span class="line-inner">done together.</span></span>
+          </h1>
+          <p class="tagline garamond" data-club-tagline>
+            Observe. Question. Build together.
+          </p>
+          <p style="margin-top: var(--space-lg); max-width: 28rem">
+            Submit project ideas for review, read club news, and join approved project groups with a
+            group code.
+          </p>
+          <a class="btn" href="/login.html" style="margin-top: var(--space-md)">Member sign in</a>
+        </div>
+        <aside class="card" data-reveal>
+          <span class="meta-label">This term</span>
+          <p class="garamond" style="font-size: 1.25rem; margin: var(--space-sm) 0 0">
+            “Small experiments, careful records, shared curiosity.”
+          </p>
+        </aside>
+      </section>
+
+      <section class="pin-section" aria-label="Club focus">
+        <div class="pin-section__inner">
+          <p class="meta-label"><span class="section-num">02</span> — What we do</p>
+          <div class="pin-phrases" data-scroll-pin>
+            <p data-pin-phrase class="is-active">Propose an idea.</p>
+            <p data-pin-phrase>Read the news board.</p>
+            <p data-pin-phrase>Join a project group.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="h-scroll-section" aria-labelledby="projects-heading">
+        <header>
+          <p class="meta-label"><span class="section-num">03</span> — On the bench</p>
+          <h2 id="projects-heading" class="display" style="font-size: 1.75rem">Approved projects</h2>
+        </header>
+        <div class="h-scroll-track" data-h-scroll tabindex="0" aria-label="Horizontal list of projects">
+          <p class="loading garamond">Loading projects…</p>
+        </div>
+      </section>
+
+      <section class="landing-cta">
+        <div>
+          <h2 class="display" style="font-size: 1.5rem">Ready to take part?</h2>
+          <p class="garamond">Students and admins use the same door — choose your role at sign in.</p>
+        </div>
+        <a class="btn" href="/login.html">Go to sign in</a>
+      </section>
+    </main>
+
+    <script src="/js/config.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/animations.js"></script>
+    <script src="/js/landing.js"></script>
+  </body>
+</html>
