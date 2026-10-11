@@ -59,6 +59,8 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   font-family: var(--font-body);
   font-size: 1rem;
   line-height: 1.55;
@@ -867,4 +869,215 @@ table.data-table th {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+.site-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.site-header__user {
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gmail-warning {
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  border: 2px solid #b45309;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  color: #7c2d12;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.05rem;
+  line-height: 1.45;
+  box-shadow: 0 0 0 1px color-mix(in srgb, #b45309 35%, transparent);
+}
+
+.gmail-warning strong {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: #9a3412;
+  margin-bottom: var(--space-xs);
+}
+
+.home-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  --home-gap: var(--space-xl);
+  --home-card-pad: var(--space-lg);
+}
+
+.home-layout__hero,
+.home-layout__grid,
+.home-layout__bench,
+.home-layout__cta {
+  width: 100%;
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.home-card--primary {
+  padding: var(--home-card-pad);
+}
+
+.home-card--inline {
+  padding: 0 var(--space-md);
+}
+
+.home-card__lede {
+  margin-top: var(--space-lg);
+  max-width: 28rem;
+}
+
+.home-card__quote {
+  font-size: 1.25rem;
+  margin: var(--space-sm) 0 0;
+}
+
+.home-card__title {
+  font-size: clamp(1.35rem, 4vw, 1.75rem);
+  margin: 0;
+}
+
+.home-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.site-footer {
+  margin-top: auto;
+  border-top: var(--rule-light);
+  background: var(--canvas-light);
+  padding: var(--space-lg) var(--space-md) calc(var(--space-lg) + env(safe-area-inset-bottom));
+}
+
+.site-footer__inner {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  display: grid;
+  gap: var(--space-md);
+}
+
+@media (min-width: 720px) {
+  .site-footer__inner {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+}
+
+.site-footer__bio {
+  margin: 0;
+  max-width: 40rem;
+  font-size: 1rem;
+}
+
+.site-footer__social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.site-footer__social a {
+  display: inline-flex;
+  padding: 0.35rem;
+  border: var(--rule-light);
+  border-radius: 999px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.site-footer__social a:hover {
+  background: var(--sand);
+}
+
+.admin-news-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--space-md) 0;
+  border-top: var(--rule-light);
+}
+
+.admin-news-row:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.btn--danger {
+  color: #991b1b;
+  border-color: color-mix(in srgb, #991b1b 40%, transparent);
+}
+
+.news-image-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
+}
+
+.news-image-preview img {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border: var(--rule-light);
+}
+
+.news-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-xs);
+  margin: var(--space-sm) 0;
+}
+
+.news-gallery img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border: var(--rule-light);
+}
+
+.activity-log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.activity-log__row {
+  padding: var(--space-sm) 0;
+  border-top: var(--rule-light);
+  display: grid;
+  gap: 0.15rem;
+}
+
+.meta-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-md) 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.app-shell {
+  flex: 1;
+  width: 100%;
 }

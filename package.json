@@ -8,7 +8,9 @@
     "dev": "node --watch server.js",
     "db:migrate": "node db/migrate.js",
     "db:seed": "node db/seed.js",
-    "db:setup": "npm run db:migrate && npm run db:seed"
+    "db:setup": "npm run db:migrate && npm run db:seed",
+    "db:flush-news": "node db/flush-news.js",
+    "db:purge-production": "node db/purge-production.js"
   },
   "engines": {
     "node": ">=18"
@@ -23,6 +25,7 @@
     "express-rate-limit": "^7.4.0",
     "express-session": "^1.18.0",
     "helmet": "^7.1.0",
+    "nodemailer": "^6.10.1",
     "pg": "^8.13.0"
   },
   "allowScripts": {

@@ -15,12 +15,17 @@
         <span data-club-logo aria-hidden="true"></span>
         <span class="site-header__title" data-club-name>AAMS Science Club</span>
       </a>
-      <a class="btn btn--ghost" href="/login.html">Sign in</a>
+      <div class="site-header__actions">
+        <span class="site-header__user meta-label" data-header-user hidden></span>
+        <a class="btn btn--ghost" href="/login.html">Sign in</a>
+        <a class="btn" href="/register.html">Create account</a>
+        <a class="btn" href="/master-login.html">Master Login</a>
+      </div>
     </header>
 
-    <main>
-      <section class="landing-hero">
-        <div>
+    <main class="home-layout">
+      <section class="home-layout__hero landing-hero">
+        <div class="home-card home-card--primary">
           <p class="meta-label"><span class="section-num">01</span> — Field notes</p>
           <h1 class="display" data-line-reveal>
             <span class="line"><span class="line-inner">School science,</span></span>
@@ -29,22 +34,25 @@
           <p class="tagline garamond" data-club-tagline>
             Observe. Question. Build together.
           </p>
-          <p style="margin-top: var(--space-lg); max-width: 28rem">
+          <p class="home-card__lede">
             Submit project ideas for review, read club news, and join approved project groups with a
             group code.
           </p>
-          <a class="btn" href="/login.html" style="margin-top: var(--space-md)">Member sign in</a>
+          <div class="home-card__actions">
+            <a class="btn" href="/register.html">Student sign up</a>
+            <a class="btn btn--ghost" href="/login.html">Member sign in</a>
+          </div>
         </div>
-        <aside class="card" data-reveal>
+        <aside class="home-card card" data-reveal>
           <span class="meta-label">This term</span>
-          <p class="garamond" style="font-size: 1.25rem; margin: var(--space-sm) 0 0">
+          <p class="garamond home-card__quote">
             “Small experiments, careful records, shared curiosity.”
           </p>
         </aside>
       </section>
 
-      <section class="pin-section" aria-label="Club focus">
-        <div class="pin-section__inner">
+      <section class="home-layout__grid pin-section" aria-label="Club focus">
+        <div class="pin-section__inner home-card">
           <p class="meta-label"><span class="section-num">02</span> — What we do</p>
           <div class="pin-phrases" data-scroll-pin>
             <p data-pin-phrase class="is-active">Propose an idea.</p>
@@ -54,26 +62,30 @@
         </div>
       </section>
 
-      <section class="h-scroll-section" aria-labelledby="projects-heading">
-        <header>
+      <section class="home-layout__bench h-scroll-section" aria-labelledby="projects-heading">
+        <header class="home-card home-card--inline">
           <p class="meta-label"><span class="section-num">03</span> — On the bench</p>
-          <h2 id="projects-heading" class="display" style="font-size: 1.75rem">Approved projects</h2>
+          <h2 id="projects-heading" class="display home-card__title">Approved projects</h2>
         </header>
         <div class="h-scroll-track" data-h-scroll tabindex="0" aria-label="Horizontal list of projects">
           <p class="loading garamond">Loading projects…</p>
         </div>
       </section>
 
-      <section class="landing-cta">
-        <div>
-          <h2 class="display" style="font-size: 1.5rem">Ready to take part?</h2>
-          <p class="garamond">Students and admins use the same door — choose your role at sign in.</p>
+      <section class="home-layout__cta landing-cta">
+        <div class="home-card home-card--inline">
+          <h2 class="display home-card__title">Ready to take part?</h2>
+          <p class="garamond">Students create an account with Gmail. Admins sign in with assigned credentials.</p>
         </div>
-        <a class="btn" href="/login.html">Go to sign in</a>
+        <div class="home-card__actions">
+          <a class="btn" href="/register.html">Create account</a>
+          <a class="btn btn--ghost" href="/login.html">Sign in</a>
+        </div>
       </section>
     </main>
 
     <script src="/js/config.js"></script>
+    <script src="/js/footer.js"></script>
     <script src="/js/app.js"></script>
     <script src="/js/animations.js"></script>
     <script src="/js/landing.js"></script>

@@ -13,12 +13,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   const next = params.get('next');
   const roleInputs = form.querySelectorAll('input[name="role"]');
   const errorEl = document.getElementById('login-error');
+  const gmailWarning = document.getElementById('gmail-warning');
+  const emailLabel = document.getElementById('email-label');
+  const emailInput = document.getElementById('email');
+
+  function syncRoleUi() {
+    const role = form.querySelector('input[name="role"]:checked')?.value || 'student';
+    const isStudent = role === 'student';
+    if (gmailWarning) gmailWarning.hidden = !isStudent;
+    if (emailLabel) emailLabel.textContent = isStudent ? 'Gmail address' : 'Email';
+    if (emailInput) {
+      emailInput.placeholder = isStudent ? 'you@gmail.com' : '';
+    }
+  }
 
   roleInputs.forEach((input) => {
     input.addEventListener('change', () => {
       form.dataset.role = input.value;
+      syncRoleUi();
     });
   });
+  syncRoleUi();
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -30,6 +45,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!email || !password) {
       App.showInlineError(errorEl, 'Enter your email and password.');
+      return;
+    }
+    if (role === 'student' && !App.isValidGmail(email)) {
+      App.showInlineError(errorEl, 'Students must sign in with a valid @gmail.com address.');
       return;
     }
 

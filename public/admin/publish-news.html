@@ -42,6 +42,14 @@
               <label for="body">Body</label>
               <textarea id="body" name="body" maxlength="10000" required></textarea>
             </div>
+            <div class="form-field">
+              <label for="images">Images (optional, multiple)</label>
+              <input id="images" name="images" type="file" accept="image/*" multiple />
+              <p class="meta-label" style="margin-top: var(--space-xs)">
+                Images are compressed to WebP under 300KB each before upload.
+              </p>
+              <div id="image-preview" class="news-image-preview" hidden></div>
+            </div>
             <p id="news-error" class="form-error" hidden role="alert"></p>
             <p id="news-success" class="garamond" hidden role="status"></p>
             <button type="submit" class="btn btn--copper">Publish</button>
@@ -51,7 +59,9 @@
     </div>
 
     <script src="/js/config.js"></script>
+    <script src="/js/footer.js"></script>
     <script src="/js/app.js"></script>
+    <script src="/js/image-compress.js"></script>
     <script src="/js/animations.js"></script>
     <script src="/js/admin-publish.js"></script>
   </body>

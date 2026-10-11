@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Master dashboard</title>
+    <link rel="stylesheet" href="/css/main.css" />
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body>
+    <header class="site-header">
+      <span class="site-header__title">Master oversight</span>
+      <a href="#" data-logout class="btn btn--ghost">Sign out</a>
+    </header>
+
+    <main class="main-content" style="max-width: var(--content-max); margin: 0 auto">
+      <header class="page-head">
+        <p class="meta-label">Fallback analytics</p>
+        <h1>Activity &amp; metrics</h1>
+        <p class="lede">Self-hosted tracking when external analytics is unavailable.</p>
+      </header>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="meta-label">Registrations (30d)</span>
+          <p class="num" data-metric="registrations">—</p>
+        </div>
+        <div class="stat-card">
+          <span class="meta-label">Projects</span>
+          <p class="num" data-metric="projects">—</p>
+        </div>
+      </div>
+
+      <section class="card" style="margin-bottom: var(--space-lg)">
+        <h2 class="display" style="font-size: 1.125rem">Ideas by status</h2>
+        <ul id="ideas-breakdown" class="meta-list"></ul>
+      </section>
+
+      <section class="card" style="margin-bottom: var(--space-lg)">
+        <h2 class="display" style="font-size: 1.125rem">Daily active users (14d)</h2>
+        <div id="daily-active"></div>
+      </section>
+
+      <section class="card" style="margin-bottom: var(--space-lg)">
+        <div style="display: flex; flex-wrap: wrap; gap: var(--space-md); align-items: center; justify-content: space-between">
+          <h2 class="display" style="font-size: 1.125rem; margin: 0">Production clean slate</h2>
+          <button type="button" class="btn btn--copper" id="purge-btn">Purge test data</button>
+        </div>
+        <p class="garamond" style="margin-top: var(--space-sm)">
+          Removes pending ideas, projects, groups, and news. User accounts are kept.
+        </p>
+        <p id="purge-msg" class="form-error" hidden role="alert"></p>
+      </section>
+
+      <section class="card">
+        <h2 class="display" style="font-size: 1.125rem">Recent activity</h2>
+        <div id="activity-log" class="activity-log"></div>
+      </section>
+    </main>
+
+    <script src="/js/footer.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/super-dashboard.js"></script>
+  </body>
+</html>

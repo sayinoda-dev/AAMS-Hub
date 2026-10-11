@@ -3,6 +3,7 @@ const { query } = require('../db/pool');
 const { requireRole } = require('../middleware/auth');
 const { csrfProtection } = require('../middleware/csrf');
 const { trimMax } = require('../lib/sanitize');
+const { logActivity } = require('../lib/activity');
 
 const router = express.Router();
 
@@ -22,6 +23,10 @@ router.post('/', requireRole('student'), csrfProtection, async (req, res) => {
        RETURNING id, title, description, status, created_at`,
       [title, description, req.session.userId]
     );
+    await logActivity('idea_submit', req.session.userId, {
+      ideaId: rows[0].id,
+      title: rows[0].title,
+    });
     res.status(201).json({ idea: rows[0] });
   } catch (err) {
     console.error(err);

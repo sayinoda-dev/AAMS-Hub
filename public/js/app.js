@@ -82,10 +82,28 @@ function navigateWithFade(url) {
   }, 180);
 }
 
+const GMAIL_RE = /^[a-z0-9](?:[a-z0-9._-]{0,62}[a-z0-9])?@gmail\.com$/i;
+
+function isValidGmail(email) {
+  const normalized = String(email || '').trim().toLowerCase();
+  return GMAIL_RE.test(normalized);
+}
+
 async function requireSession(role) {
   const data = await api('/api/auth/me');
   if (!data.user) {
     navigateWithFade('/login.html?next=' + encodeURIComponent(window.location.pathname));
+    return null;
+  }
+  if (role === 'superadmin') {
+    if (data.user.role !== 'superadmin') {
+      navigateWithFade('/login.html');
+      return null;
+    }
+    return data.user;
+  }
+  if (data.user.role === 'superadmin') {
+    navigateWithFade('/super/dashboard.html');
     return null;
   }
   if (role && data.user.role !== role) {
@@ -93,6 +111,22 @@ async function requireSession(role) {
     return null;
   }
   return data.user;
+}
+
+async function initHeaderSession() {
+  try {
+    const data = await api('/api/auth/me');
+    if (!data.user) return;
+    document.querySelectorAll('[data-header-user]').forEach((el) => {
+      el.textContent = data.user.name;
+      el.hidden = false;
+    });
+    document.querySelectorAll('[data-user-name]').forEach((el) => {
+      el.textContent = data.user.name;
+    });
+  } catch (_) {
+    /* public page */
+  }
 }
 
 async function logout() {
@@ -126,6 +160,8 @@ function bindNavCompact() {
 document.addEventListener('DOMContentLoaded', () => {
   setPageEnter();
   fetchCsrfToken().catch(() => {});
+  if (typeof window.mountGlobalFooter === 'function') window.mountGlobalFooter();
+  initHeaderSession().catch(() => {});
 
   document.querySelectorAll('[data-nav-link]').forEach((a) => {
     a.addEventListener('click', (e) => {
@@ -158,4 +194,5 @@ window.App = {
   showInlineError,
   navigateWithFade,
   getCsrfToken,
+  isValidGmail,
 };

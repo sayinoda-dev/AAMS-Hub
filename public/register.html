@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Create account — Science Club</title>
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="site-header__brand" href="/">
+        <span data-club-logo aria-hidden="true"></span>
+        <span class="site-header__title" data-club-name>AAMS Science Club</span>
+      </a>
+      <a class="btn btn--ghost" href="/login.html">Sign in</a>
+    </header>
+
+    <main class="main-content" style="max-width: 28rem; margin: 0 auto">
+      <div class="page-head">
+        <h1>Create account</h1>
+        <p class="lede">Student registration only. Admins are assigned by the club team.</p>
+      </div>
+
+      <div class="gmail-warning" role="note">
+        <strong>Gmail required</strong>
+        <p>
+          The Gmail address you provide will be used to automatically send official Science Club
+          project codes and communication. Please ensure it is accurate and active.
+        </p>
+      </div>
+
+      <form id="register-form" novalidate>
+        <div class="form-field">
+          <label for="name">Full name</label>
+          <input id="name" name="name" autocomplete="name" maxlength="120" required />
+        </div>
+
+        <div class="form-field">
+          <label for="email">Gmail address</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            placeholder="you@gmail.com"
+            required
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="new-password"
+            minlength="8"
+            required
+          />
+        </div>
+
+        <p id="register-error" class="form-error" hidden role="alert"></p>
+
+        <button type="submit" class="btn" style="width: 100%; max-width: 20rem">Create account</button>
+      </form>
+
+      <p class="garamond" style="margin-top: var(--space-lg)">
+        Already registered?
+        <a href="/login.html">Sign in</a>
+      </p>
+    </main>
+
+    <script src="/js/config.js"></script>
+    <script src="/js/footer.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/register.js"></script>
+  </body>
+</html>

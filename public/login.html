@@ -20,6 +20,14 @@
         <p class="lede">Choose student or admin, then enter your school account details.</p>
       </div>
 
+      <div class="gmail-warning" id="gmail-warning" role="note">
+        <strong>Gmail required for students</strong>
+        <p>
+          The Gmail address you provide will be used to automatically send official Science Club
+          project codes and communication. Please ensure it is accurate and active.
+        </p>
+      </div>
+
       <form id="login-form" novalidate>
         <fieldset class="form-field">
           <legend class="meta-label">Role</legend>
@@ -36,8 +44,15 @@
         </fieldset>
 
         <div class="form-field">
-          <label for="email">Email</label>
-          <input id="email" name="email" type="email" autocomplete="username" required />
+          <label for="email" id="email-label">Gmail address</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="username"
+            placeholder="you@gmail.com"
+            required
+          />
         </div>
 
         <div class="form-field">
@@ -49,9 +64,16 @@
 
         <button type="submit" class="btn" style="width: 100%; max-width: 20rem">Sign in</button>
       </form>
+
+      <p class="garamond" style="margin-top: var(--space-lg)">
+        New student?
+        <a href="/register.html">Create account</a>
+        (students only)
+      </p>
     </main>
 
     <script src="/js/config.js"></script>
+    <script src="/js/footer.js"></script>
     <script src="/js/app.js"></script>
     <script src="/js/login.js"></script>
   </body>

@@ -3,6 +3,8 @@ const { query } = require('../db/pool');
 const { requireRole } = require('../middleware/auth');
 const { csrfProtection } = require('../middleware/csrf');
 const { generateGroupCode, codeExpiresAt } = require('../db/groupCode');
+const { sendProjectCodeEmail } = require('../lib/mail');
+const { logActivity } = require('../lib/activity');
 
 const router = express.Router();
 
@@ -61,7 +63,11 @@ router.post('/ideas/:id/accept', requireRole('admin'), csrfProtection, async (re
   try {
     await client.query('BEGIN');
     const { rows: ideas } = await client.query(
-      `SELECT id, title, description, status FROM ideas WHERE id = $1 FOR UPDATE`,
+      `SELECT i.id, i.title, i.description, i.status, i.submitted_by,
+              u.email AS submitter_email, u.name AS submitter_name
+       FROM ideas i
+       JOIN users u ON u.id = i.submitted_by
+       WHERE i.id = $1 FOR UPDATE`,
       [ideaId]
     );
     if (!ideas.length) {
@@ -90,10 +96,51 @@ router.post('/ideas/:id/accept', requireRole('admin'), csrfProtection, async (re
     );
 
     await client.query('COMMIT');
+
+    const project = proj[0];
+    let emailStatus = 'skipped';
+    try {
+      const mailResult = await sendProjectCodeEmail({
+        to: idea.submitter_email,
+        studentName: idea.submitter_name,
+        projectTitle: project.title,
+        groupCode: project.group_code,
+        expiresAt: project.code_expires_at,
+      });
+      emailStatus = mailResult.skipped ? 'skipped' : 'sent';
+      await query(
+        `INSERT INTO project_code_emails (project_id, recipient_email, status)
+         VALUES ($1, $2, $3)`,
+        [project.id, idea.submitter_email, emailStatus]
+      );
+    } catch (mailErr) {
+      console.error('project code email:', mailErr);
+      emailStatus = 'failed';
+      try {
+        await query(
+          `INSERT INTO project_code_emails (project_id, recipient_email, status)
+           VALUES ($1, $2, 'failed')`,
+          [project.id, idea.submitter_email]
+        );
+      } catch (_) {
+        /* ignore */
+      }
+    }
+
+    await logActivity('idea_accepted', req.session.userId, {
+      ideaId,
+      projectId: project.id,
+      emailStatus,
+    });
+
     res.json({
       ok: true,
-      project: proj[0],
-      message: 'Project created. Share the group code with students who should join.',
+      project,
+      emailStatus,
+      message:
+        emailStatus === 'sent'
+          ? 'Project created. The group code was emailed to the student’s Gmail.'
+          : 'Project created. Share the group code with students who should join.',
     });
   } catch (err) {
     await client.query('ROLLBACK');

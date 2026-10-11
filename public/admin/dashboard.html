@@ -61,6 +61,19 @@
             </div>
           </div>
 
+          <section class="card" style="margin-top: var(--space-xl)" data-reveal>
+            <header style="display: flex; flex-wrap: wrap; gap: var(--space-md); align-items: baseline; justify-content: space-between">
+              <div>
+                <p class="meta-label">News desk</p>
+                <h2 class="display" style="font-size: 1.25rem; margin: 0">Published news</h2>
+              </div>
+              <a class="btn btn--ghost" href="/admin/publish-news.html" data-nav-link>Publish new</a>
+            </header>
+            <div id="admin-news-list" style="margin-top: var(--space-md)">
+              <p class="loading garamond">Loading news…</p>
+            </div>
+          </section>
+
           <div class="card-grid" style="grid-template-columns: 1fr; max-width: 28rem">
             <a class="card" href="/admin/publish-news.html" data-nav-link data-reveal>
               <span class="meta-label"><span class="section-num">01</span></span>
@@ -78,6 +91,7 @@
     </div>
 
     <script src="/js/config.js"></script>
+    <script src="/js/footer.js"></script>
     <script src="/js/app.js"></script>
     <script src="/js/animations.js"></script>
     <script src="/js/admin-dashboard.js"></script>
