@@ -24,11 +24,16 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
+        scriptSrc: ["'self'", 'https://www.googletagmanager.com', "'unsafe-inline'"],
         styleSrc: ["'self'", 'https://fonts.googleapis.com'],
         fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-        imgSrc: ["'self'", 'data:'],
-        connectSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'https://www.google-analytics.com'],
+        connectSrc: [
+          "'self'",
+          'https://www.google-analytics.com',
+          'https://region1.google-analytics.com',
+          'https://www.googletagmanager.com',
+        ],
         frameSrc: ["'none'"],
       },
     },
