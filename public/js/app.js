@@ -110,6 +110,10 @@ async function requireSession(role) {
     navigateWithFade(data.user.role === 'admin' ? '/admin/dashboard.html' : '/student/news.html');
     return null;
   }
+    if (data.user.role === 'student' && data.user.signupStatus !== 'approved') {
+    navigateWithFade('/register-pending.html');
+    return null;
+  }
   return data.user;
 }
 

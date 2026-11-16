@@ -10,6 +10,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   const errorEl = document.getElementById('register-error');
+  const clubSelect = document.getElementById('clubId');
+
+try {
+  const data = await App.api('/api/clubs');
+  clubSelect.innerHTML = '<option value="">Select your club</option>';
+  data.clubs.forEach((c) => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.name;
+    clubSelect.appendChild(opt);
+  });
+} catch (err) {
+  clubSelect.innerHTML = '<option value="">Could not load clubs</option>';
+  App.showInlineError(errorEl, 'Could not load clubs. Refresh the page.');
+}
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -18,6 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const name = String(fd.get('name') || '').trim();
     const email = String(fd.get('email') || '').trim().toLowerCase();
     const password = String(fd.get('password') || '');
+    const clubId = parseInt(String(fd.get('clubId') || ''), 10);
 
     if (!name || name.length < 2) {
       App.showInlineError(errorEl, 'Enter your full name.');
@@ -32,12 +48,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
+    if (!clubId) {
+      App.showInlineError(errorEl, 'Select your club.');
+      return;
+    }
+
     const btn = form.querySelector('button[type="submit"]');
     btn.disabled = true;
     try {
       const data = await App.api('/api/auth/register', {
         method: 'POST',
-        body: { name, email, password },
+        body: { name, email, password, club_id:clubId },
       });
       App.navigateWithFade(data.redirect || '/student/news.html');
     } catch (err) {

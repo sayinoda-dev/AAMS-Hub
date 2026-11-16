@@ -1,6 +1,6 @@
 const express = require('express');
 const { pool, query } = require('../db/pool');
-const { requireAuth, requireRole } = require('../middleware/auth');
+const { requireAuth, requireRole, requireApprovedMember, assertClubScope } = require('../middleware/auth');
 const { csrfProtection } = require('../middleware/csrf');
 const { trimMax } = require('../lib/sanitize');
 const { saveNewsImages, deleteNewsImageFiles } = require('../lib/newsImages');
@@ -30,13 +30,15 @@ async function attachImages(newsRows) {
   }));
 }
 
-router.get('/', requireAuth, async (_req, res) => {
+router.get('/', requireAuth, requireApprovedMember, async (req, res) => {
   try {
     const { rows } = await query(
       `SELECT n.id, n.title, n.body, n.published_at, u.name AS author_name
        FROM news n
        JOIN users u ON u.id = n.author_id
-       ORDER BY n.published_at DESC`
+       WHERE n.club_id = $1
+       ORDER BY n.published_at DESC`,
+      [req.session.clubId]
     );
     const news = await attachImages(rows);
     res.json({ news });
@@ -46,13 +48,15 @@ router.get('/', requireAuth, async (_req, res) => {
   }
 });
 
-router.get('/manage', requireRole('admin'), async (_req, res) => {
+router.get('/manage', requireRole('admin'), async (req, res) => {
   try {
     const { rows } = await query(
       `SELECT n.id, n.title, n.body, n.published_at, u.name AS author_name
        FROM news n
        JOIN users u ON u.id = n.author_id
-       ORDER BY n.published_at DESC`
+       WHERE n.club_id = $1
+       ORDER BY n.published_at DESC`,
+      [req.session.clubId]
     );
     const news = await attachImages(rows);
     res.json({ news });
@@ -65,7 +69,12 @@ router.get('/manage', requireRole('admin'), async (_req, res) => {
 router.get('/public', async (_req, res) => {
   try {
     const { rows } = await query(
-      `SELECT id, title, body, published_at FROM news ORDER BY published_at DESC LIMIT 6`
+      `SELECT n.id, n.title, n.body, n.published_at,
+              c.name AS club_name, c.slug AS club_slug
+       FROM news n
+       JOIN clubs c ON c.id = n.club_id
+       WHERE c.is_active = true
+       ORDER BY n.published_at DESC LIMIT 6`
     );
     const news = await attachImages(rows);
     res.json({ news });
@@ -86,9 +95,9 @@ router.post('/', requireRole('admin'), csrfProtection, async (req, res) => {
   try {
     await client.query('BEGIN');
     const { rows } = await client.query(
-      `INSERT INTO news (title, body, author_id) VALUES ($1, $2, $3)
+      `INSERT INTO news (title, body, author_id, club_id) VALUES ($1, $2, $3, $4)
        RETURNING id, title, body, published_at`,
-      [title, body, req.session.userId]
+      [title, body, req.session.userId, req.session.clubId]
     );
     const item = rows[0];
     const savedImages = await saveNewsImages(item.id, images, client);
@@ -115,7 +124,10 @@ router.delete('/:id', requireRole('admin'), csrfProtection, async (req, res) => 
       `SELECT file_path FROM news_images WHERE news_id = $1`,
       [newsId]
     );
-    const { rows } = await client.query(`DELETE FROM news WHERE id = $1 RETURNING id`, [newsId]);
+    const { rows } = await client.query(
+      `DELETE FROM news WHERE id = $1 AND club_id = $2 RETURNING id`,
+      [newsId, req.session.clubId]
+    );
     if (!rows.length) {
       await client.query('ROLLBACK');
       return res.status(404).json({ error: 'News item not found.' });

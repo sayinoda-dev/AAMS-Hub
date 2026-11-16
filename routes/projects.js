@@ -1,14 +1,16 @@
+
 const express = require('express');
 const { query } = require('../db/pool');
-const { requireAuth, requireRole } = require('../middleware/auth');
+const { requireAuth, requireRole, requireApprovedMember } = require('../middleware/auth');
 const { csrfProtection } = require('../middleware/csrf');
 const { trimMax } = require('../lib/sanitize');
 
 const router = express.Router();
 
-router.get('/', requireAuth, async (req, res) => {
+router.get('/', requireAuth, requireApprovedMember, async (req, res) => {
   try {
     const userId = req.session.userId;
+    const clubId = req.session.clubId;
     const { rows } = await query(
       `SELECT p.id, p.title, p.description, p.group_code, p.code_expires_at, p.created_at,
               EXISTS (
@@ -16,8 +18,9 @@ router.get('/', requireAuth, async (req, res) => {
                 WHERE pm.project_id = p.id AND pm.user_id = $1
               ) AS joined
        FROM projects p
+       WHERE p.club_id = $2
        ORDER BY p.created_at DESC`,
-      [userId]
+      [userId, clubId]
     );
     res.json({
       projects: rows.map((p) => ({
@@ -35,7 +38,12 @@ router.get('/', requireAuth, async (req, res) => {
 router.get('/public', async (_req, res) => {
   try {
     const { rows } = await query(
-      `SELECT id, title, description, created_at FROM projects ORDER BY created_at DESC LIMIT 8`
+      `SELECT p.id, p.title, p.description, p.created_at, c.name AS club_name, c.slug AS club_slug
+       FROM projects p
+       JOIN clubs c ON c.id = p.club_id
+       WHERE c.is_active = true
+       ORDER BY p.created_at DESC
+       LIMIT 8`
     );
     res.json({ projects: rows });
   } catch (err) {
@@ -44,20 +52,23 @@ router.get('/public', async (_req, res) => {
   }
 });
 
-router.post('/join', requireRole('student'), csrfProtection, async (req, res) => {
+router.post('/join', requireRole('student'), requireApprovedMember, csrfProtection, async (req, res) => {
   const code = trimMax(String(req.body.group_code || '').toUpperCase().replace(/\s/g, ''), 12);
   if (!code || code.length < 6) {
     return res.status(400).json({ error: 'Enter the group code from your project lead.' });
   }
   try {
     const { rows } = await query(
-      `SELECT id, title, code_expires_at FROM projects WHERE group_code = $1`,
+      `SELECT id, title, code_expires_at, club_id FROM projects WHERE group_code = $1`,
       [code]
     );
     if (!rows.length) {
       return res.status(404).json({ error: 'No project matches that code.' });
     }
     const project = rows[0];
+        if (project.club_id !== req.session.clubId) {
+      return res.status(404).json({ error: 'No project matches that code.' });
+    }
     if (new Date(project.code_expires_at) < new Date()) {
       return res.status(410).json({
         error: 'This group code has expired. Ask an admin to issue a new code.',
@@ -75,15 +86,15 @@ router.post('/join', requireRole('student'), csrfProtection, async (req, res) =>
   }
 });
 
-router.get('/my-memberships', requireRole('student'), async (req, res) => {
+router.get('/my-memberships', requireRole('student'), requireApprovedMember, async (req, res) => {
   try {
     const { rows } = await query(
       `SELECT p.id, p.title, pm.joined_at
        FROM project_members pm
        JOIN projects p ON p.id = pm.project_id
-       WHERE pm.user_id = $1
+       WHERE pm.user_id = $1 AND p.club_id = $2
        ORDER BY pm.joined_at DESC`,
-      [req.session.userId]
+      [req.session.userId, req.session.clubId]
     );
     res.json({ memberships: rows });
   } catch (err) {

@@ -13,6 +13,9 @@ const ideasRoutes = require('./routes/ideas');
 const projectsRoutes = require('./routes/projects');
 const adminRoutes = require('./routes/admin');
 const superRoutes = require('./routes/super');
+const clubsRoutes = require('./routes/clubs');
+const { refreshSessionUser } = require('./middleware/refreshSession');
+const chatRoutes = require('./routes/chat');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -79,15 +82,26 @@ const registerLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const joinLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  message: { error: 'Too many attempts. Wait a few minutes and try again.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 app.use('/api/auth/login', loginLimiter);
 app.use('/api/auth/register', registerLimiter);
 app.use('/api/auth/master-login', loginLimiter);
-
+app.use('/api/projects/join', joinLimiter);
+app.use('/api', refreshSessionUser);
+app.use('/api/chat', chatRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/ideas', ideasRoutes);
 app.use('/api/projects', projectsRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/clubs', clubsRoutes);
 app.use('/api/super', superRoutes);
 
 function protectHtml(role, file) {
@@ -115,6 +129,7 @@ app.get('/admin/dashboard.html', protectHtml('admin', 'admin/dashboard.html'));
 app.get('/admin/publish-news.html', protectHtml('admin', 'admin/publish-news.html'));
 app.get('/admin/review-queue.html', protectHtml('admin', 'admin/review-queue.html'));
 app.get('/super/dashboard.html', protectHtml('superadmin', 'super/dashboard.html'));
+app.get('/student/chat.html', protectHtml('student', 'student/chat.html'));
 app.get('/master-login.html', (_req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'master-login.html'));
 });

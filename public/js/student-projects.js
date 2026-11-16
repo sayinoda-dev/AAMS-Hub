@@ -52,9 +52,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         ${list
           .map(
             (m) => `
-          <li class="card" style="margin-bottom:0.5rem">
-            ${App.escapeHtml(m.title)}
-            <span class="meta-label"> · joined ${App.escapeHtml(App.formatDate(m.joined_at))}</span>
+          <li class="card" style="margin-bottom:0.5rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+            <span style="flex:1">
+              ${App.escapeHtml(m.title)}
+              <span class="meta-label"> · joined ${App.escapeHtml(App.formatDate(m.joined_at))}</span>
+            </span>
+            <a class="btn btn--ghost" href="/student/chat.html?project=${encodeURIComponent(m.id)}">Chat</a>
           </li>`
           )
           .join('')}

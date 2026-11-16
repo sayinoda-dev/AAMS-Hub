@@ -34,11 +34,47 @@
           <span class="meta-label">Registrations (30d)</span>
           <p class="num" data-metric="registrations">—</p>
         </div>
+
         <div class="stat-card">
           <span class="meta-label">Projects</span>
           <p class="num" data-metric="projects">—</p>
         </div>
       </div>
+            <section class="card" style="margin-bottom: var(--space-lg)">
+        <div style="display: flex; flex-wrap: wrap; gap: var(--space-md); align-items: center; justify-content: space-between">
+          <h2 class="display" style="font-size: 1.125rem; margin: 0">Members</h2>
+          <select id="member-filter" aria-label="Filter members">
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="all">All</option>
+          </select>
+        </div>
+        <p id="members-msg" class="form-error" hidden role="alert"></p>
+        <div id="members-list" class="activity-log"></div>
+      </section>
+
+      <section class="card" style="margin-bottom: var(--space-lg)">
+        <h2 class="display" style="font-size: 1.125rem">Clubs</h2>
+        <div id="clubs-list" class="activity-log"></div>
+
+        <form id="club-form" novalidate style="margin-top: var(--space-md)">
+          <div class="form-field">
+            <label for="club-name">Club name</label>
+            <input id="club-name" maxlength="120" required />
+          </div>
+          <div class="form-field">
+            <label for="club-slug">Slug (lowercase, hyphens)</label>
+            <input id="club-slug" maxlength="64" placeholder="robotics-club" required />
+          </div>
+          <div class="form-field">
+            <label for="club-tagline">Tagline (optional)</label>
+            <input id="club-tagline" maxlength="255" />
+          </div>
+          <p id="club-msg" class="form-error" hidden role="alert"></p>
+          <button type="submit" class="btn">Add club</button>
+        </form>
+      </section>
 
       <section class="card" style="margin-bottom: var(--space-lg)">
         <h2 class="display" style="font-size: 1.125rem">Ideas by status</h2>

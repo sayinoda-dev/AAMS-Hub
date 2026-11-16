@@ -1,6 +1,6 @@
 const express = require('express');
 const { query } = require('../db/pool');
-const { requireRole } = require('../middleware/auth');
+const { requireRole, assertClubScope } = require('../middleware/auth');
 const { csrfProtection } = require('../middleware/csrf');
 const { generateGroupCode, codeExpiresAt } = require('../db/groupCode');
 const { sendProjectCodeEmail } = require('../lib/mail');
@@ -8,12 +8,15 @@ const { logActivity } = require('../lib/activity');
 
 const router = express.Router();
 
-router.get('/stats', requireRole('admin'), async (_req, res) => {
+router.get('/stats', requireRole('admin'), async (req, res) => {
+  const clubId = req.session.clubId;
   try {
     const [pending, news, projects] = await Promise.all([
-      query(`SELECT COUNT(*)::int AS c FROM ideas WHERE status = 'pending'`),
-      query(`SELECT COUNT(*)::int AS c FROM news`),
-      query(`SELECT COUNT(*)::int AS c FROM projects`),
+      query(`SELECT COUNT(*)::int AS c FROM ideas WHERE status = 'pending' AND club_id = $1`, [
+        clubId,
+      ]),
+      query(`SELECT COUNT(*)::int AS c FROM news WHERE club_id = $1`, [clubId]),
+      query(`SELECT COUNT(*)::int AS c FROM projects WHERE club_id = $1`, [clubId]),
     ]);
     res.json({
       pendingIdeas: pending.rows[0].c,
@@ -26,14 +29,15 @@ router.get('/stats', requireRole('admin'), async (_req, res) => {
   }
 });
 
-router.get('/ideas/pending', requireRole('admin'), async (_req, res) => {
+router.get('/ideas/pending', requireRole('admin'), async (req, res) => {
   try {
     const { rows } = await query(
       `SELECT i.id, i.title, i.description, i.created_at, u.name AS submitter_name, u.email AS submitter_email
        FROM ideas i
        JOIN users u ON u.id = i.submitted_by
-       WHERE i.status = 'pending'
-       ORDER BY i.created_at ASC`
+       WHERE i.status = 'pending' AND i.club_id = $1
+       ORDER BY i.created_at ASC`,
+      [req.session.clubId]
     );
     res.json({ ideas: rows });
   } catch (err) {
@@ -67,8 +71,8 @@ router.post('/ideas/:id/accept', requireRole('admin'), csrfProtection, async (re
               u.email AS submitter_email, u.name AS submitter_name
        FROM ideas i
        JOIN users u ON u.id = i.submitted_by
-       WHERE i.id = $1 FOR UPDATE`,
-      [ideaId]
+       WHERE i.id = $1 AND i.club_id = $2 FOR UPDATE`,
+      [ideaId, req.session.clubId]
     );
     if (!ideas.length) {
       await client.query('ROLLBACK');
@@ -89,10 +93,10 @@ router.post('/ideas/:id/accept', requireRole('admin'), csrfProtection, async (re
     );
 
     const { rows: proj } = await client.query(
-      `INSERT INTO projects (idea_id, title, description, group_code, code_expires_at)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO projects (idea_id, title, description, group_code, code_expires_at, club_id)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING id, title, group_code, code_expires_at`,
-      [ideaId, idea.title, idea.description, groupCode, expires]
+      [ideaId, idea.title, idea.description, groupCode, expires, req.session.clubId]
     );
 
     await client.query('COMMIT');
@@ -127,11 +131,12 @@ router.post('/ideas/:id/accept', requireRole('admin'), csrfProtection, async (re
       }
     }
 
-    await logActivity('idea_accepted', req.session.userId, {
-      ideaId,
-      projectId: project.id,
-      emailStatus,
-    });
+    await logActivity(
+      'idea_accepted',
+      req.session.userId,
+      { ideaId, projectId: project.id, emailStatus },
+      req.session.clubId
+    );
 
     res.json({
       ok: true,
@@ -157,9 +162,9 @@ router.post('/ideas/:id/reject', requireRole('admin'), csrfProtection, async (re
   try {
     const { rows } = await query(
       `UPDATE ideas SET status = 'rejected', reviewed_at = NOW()
-       WHERE id = $1 AND status = 'pending'
+       WHERE id = $1 AND status = 'pending' AND club_id = $2
        RETURNING id`,
-      [ideaId]
+      [ideaId, req.session.clubId]
     );
     if (!rows.length) {
       return res.status(404).json({ error: 'Idea not found or already reviewed.' });
@@ -171,13 +176,15 @@ router.post('/ideas/:id/reject', requireRole('admin'), csrfProtection, async (re
   }
 });
 
-router.get('/projects', requireRole('admin'), async (_req, res) => {
+router.get('/projects', requireRole('admin'), async (req, res) => {
   try {
     const { rows } = await query(
       `SELECT p.id, p.title, p.group_code, p.code_expires_at, p.created_at,
               (SELECT COUNT(*)::int FROM project_members pm WHERE pm.project_id = p.id) AS member_count
        FROM projects p
-       ORDER BY p.created_at DESC`
+       WHERE p.club_id = $1
+       ORDER BY p.created_at DESC`,
+      [req.session.clubId]
     );
     res.json({ projects: rows });
   } catch (err) {
@@ -195,9 +202,10 @@ router.post('/projects/:id/regenerate-code', requireRole('admin'), csrfProtectio
     const groupCode = await uniqueGroupCode(client);
     const expires = codeExpiresAt(expiryDays);
     const { rows } = await client.query(
-      `UPDATE projects SET group_code = $1, code_expires_at = $2 WHERE id = $3
+      `UPDATE projects SET group_code = $1, code_expires_at = $2
+       WHERE id = $3 AND club_id = $4
        RETURNING id, title, group_code, code_expires_at`,
-      [groupCode, expires, projectId]
+      [groupCode, expires, projectId, req.session.clubId]
     );
     if (!rows.length) {
       return res.status(404).json({ error: 'Project not found.' });

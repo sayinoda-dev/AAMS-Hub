@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
           .map(
             (p) => `
           <article class="h-scroll-card" data-reveal>
-            <span class="meta-label">Project</span>
+            <span class="meta-label">${App.escapeHtml(p.club_name || 'Project')}</span>
             <h3>${App.escapeHtml(p.title)}</h3>
             <p>${App.escapeHtml(p.description.slice(0, 120))}${p.description.length > 120 ? '…' : ''}</p>
           </article>`
