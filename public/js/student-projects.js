@@ -7,9 +7,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const projectsRoot = document.getElementById('projects-root');
   const membershipsRoot = document.getElementById('memberships-root');
-  const joinForm = document.getElementById('join-form');
-  const joinError = document.getElementById('join-error');
-  const joinSuccess = document.getElementById('join-success');
+
+  const errorEl = document.createElement('p');
+  errorEl.className = 'form-error';
+  errorEl.hidden = true;
+  errorEl.setAttribute('role', 'alert');
+  projectsRoot.parentNode.insertBefore(errorEl, projectsRoot);
 
   async function loadProjects() {
     try {
@@ -21,8 +24,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
       projectsRoot.innerHTML = projects
-        .map(
-          (p, i) => `
+        .map((p, i) => {
+          const id = App.escapeHtml(String(p.id));
+          const actions = p.joined
+            ? `<a class="btn btn--ghost" href="/student/chat.html?project=${encodeURIComponent(p.id)}">Chat</a>
+               <button type="button" class="btn btn--ghost" data-leave-id="${id}">Leave</button>`
+            : `<button type="button" class="btn" data-join-id="${id}">Join</button>`;
+          return `
         <article class="card" data-reveal style="margin-bottom: var(--space-sm); --reveal-delay:${i * 40}ms">
           <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
             <h3 style="font-weight:500;margin:0;flex:1">${App.escapeHtml(p.title)}</h3>
@@ -30,8 +38,9 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
           <p>${App.escapeHtml(p.description)}</p>
           <p class="meta-label">${App.escapeHtml(App.formatDate(p.created_at))}</p>
-        </article>`
-        )
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap">${actions}</div>
+        </article>`;
+        })
         .join('');
       Animations.initReveal();
     } catch (err) {
@@ -40,6 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function loadMemberships() {
+    if (!membershipsRoot) return;
     try {
       const data = await App.api('/api/projects/my-memberships');
       const list = data.memberships || [];
@@ -67,34 +77,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  loadProjects();
-  loadMemberships();
-
-  joinForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    App.showInlineError(joinError, '');
-    joinSuccess.hidden = true;
-    const code = joinForm.group_code.value.trim();
-    if (!code) {
-      App.showInlineError(joinError, 'Enter the group code.');
+  projectsRoot.addEventListener('click', async (e) => {
+    const btn = e.target.closest('button[data-join-id], button[data-leave-id]');
+    if (!btn) return;
+    const joining = Boolean(btn.dataset.joinId);
+    const id = btn.dataset.joinId || btn.dataset.leaveId;
+    if (!joining && !window.confirm('Leave this project? You will lose access to its chat.')) {
       return;
     }
-    const btn = joinForm.querySelector('button[type="submit"]');
+    App.showInlineError(errorEl, '');
     btn.disabled = true;
     try {
-      const data = await App.api('/api/projects/join', {
-        method: 'POST',
-        body: { group_code: code },
-      });
-      joinSuccess.textContent = `You joined “${data.project.title}”.`;
-      joinSuccess.hidden = false;
-      joinForm.reset();
-      loadProjects();
-      loadMemberships();
+      if (joining) {
+        await App.api(`/api/projects/${id}/join`, { method: 'POST', body: {} });
+        App.navigateWithFade(`/student/chat.html?project=${encodeURIComponent(id)}`);
+        return;
+      }
+      await App.api(`/api/projects/${id}/membership`, { method: 'DELETE' });
+      await Promise.all([loadProjects(), loadMemberships()]);
     } catch (err) {
-      App.showInlineError(joinError, err.message);
-    } finally {
+      App.showInlineError(errorEl, err.message);
       btn.disabled = false;
     }
   });
+
+  loadProjects();
+  loadMemberships();
 });
