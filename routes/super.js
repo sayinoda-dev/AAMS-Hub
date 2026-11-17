@@ -166,7 +166,7 @@ router.post('/members/:id/role', requireSuperAdmin, csrfProtection, async (req, 
 router.get('/clubs', requireSuperAdmin, async (_req, res) => {
   try {
     const { rows } = await query(
-      `SELECT c.id, c.slug, c.name, c.tagline, c.is_active,
+      `SELECT c.id, c.slug, c.name, c.tagline, c.is_active, c.requires_approval,
               (SELECT COUNT(*)::int FROM users u WHERE u.club_id = c.id) AS member_count
        FROM clubs c
        ORDER BY c.name`
@@ -223,4 +223,26 @@ router.post('/clubs/:id/active', requireSuperAdmin, csrfProtection, async (req, 
     res.status(500).json({ error: 'Could not update club.' });
   }
 });
+
+// Turn the "approval required" setting on or off for a club
+router.post('/clubs/:id/approval', requireSuperAdmin, csrfProtection, async (req, res) => {
+  const clubId = parseInt(req.params.id, 10);
+  if (!clubId || typeof req.body?.required !== 'boolean') {
+    return res.status(400).json({ error: 'Invalid request.' });
+  }
+  try {
+    const { rows } = await query(
+      `UPDATE clubs SET requires_approval = $1 WHERE id = $2
+       RETURNING id, slug, requires_approval`,
+      [req.body.required, clubId]
+    );
+    if (!rows.length) return res.status(404).json({ error: 'Club not found.' });
+    await logActivity('club_approval_changed', null, { required: req.body.required }, clubId);
+    res.json({ ok: true, club: rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Could not update club.' });
+  }
+});
+
 module.exports = router;

@@ -132,9 +132,9 @@ document.addEventListener('DOMContentLoaded', async () => {
           .map(
             (c) => `<article class="activity-log__row">
               <strong>${esc(c.name)}</strong>
-              <span class="garamond">${esc(c.slug)} · ${esc(String(c.member_count))} members · ${c.is_active ? 'active' : 'inactive'}</span>
-              <button type="button" class="btn btn--ghost" data-club-id="${esc(String(c.id))}" data-active="${c.is_active}">
-                ${c.is_active ? 'Deactivate' : 'Activate'}
+                           <span class="garamond">${esc(c.slug)} · ${esc(String(c.member_count))} members · ${c.is_active ? 'active' : 'inactive'} · ${c.requires_approval ? 'approval required' : 'open join'}</span>
+              <button type="button" class="btn btn--ghost" data-approval-id="${esc(String(c.id))}" data-required="${c.requires_approval}">
+                ${c.requires_approval ? 'Make open' : 'Require approval'}
               </button>
             </article>`
           )
@@ -159,6 +159,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       await App.api(`/api/super/clubs/${btn.dataset.clubId}/active`, {
         method: 'POST',
         body: { active: makeActive },
+      });
+      await loadClubs();
+    } catch (err) {
+      App.showInlineError(clubMsg, err.message);
+      btn.disabled = false;
+    }
+  });
+    clubsList.addEventListener('click', async (e) => {
+    const btn = e.target.closest('button[data-approval-id]');
+    if (!btn) return;
+    btn.disabled = true;
+    try {
+      await App.api(`/api/super/clubs/${btn.dataset.approvalId}/approval`, {
+        method: 'POST',
+        body: { required: btn.dataset.required !== 'true' },
       });
       await loadClubs();
     } catch (err) {

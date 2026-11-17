@@ -1,0 +1,1 @@
+ALTER TABLE clubs ADD COLUMN IF NOT EXISTS requires_approval BOOLEAN NOT NULL DEFAULT false;

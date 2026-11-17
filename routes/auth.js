@@ -65,18 +65,19 @@ router.post('/register', csrfProtection, async (req, res) => {
     return res.status(400).json({ error: 'Select your club.' });
   }
 
-  const club = await getClubById(clubId);
-  if (!club || !club.is_active) {
-    return res.status(400).json({ error: 'Choose a valid club.' });
-  }
-
   try {
+    const club = await getClubById(clubId);
+    if (!club || !club.is_active) {
+      return res.status(400).json({ error: 'Choose a valid club.' });
+    }
+
+    const status = club.requires_approval ? 'pending' : 'approved';
     const hash = await bcrypt.hash(password, 12);
     const { rows } = await query(
       `INSERT INTO users (name, email, password_hash, role, club_id, signup_status)
-       VALUES ($1, $2, $3, 'student', $4, 'pending')
+       VALUES ($1, $2, $3, 'student', $4, $5)
        RETURNING id, name, email, role, club_id, signup_status`,
-      [name, email, hash, clubId]
+      [name, email, hash, clubId, status]
     );
     const user = rows[0];
     req.session.userId = user.id;
@@ -95,8 +96,8 @@ router.post('/register', csrfProtection, async (req, res) => {
 
     res.status(201).json({
       ok: true,
-      redirect: '/register-pending.html',
-      signupStatus: 'pending',
+      redirect: user.signup_status === 'approved' ? '/student/news.html' : '/register-pending.html',
+      signupStatus: user.signup_status,
     });
   } catch (err) {
     if (err.code === '23505') {
